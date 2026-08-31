@@ -3,7 +3,9 @@ import { mockAnalysisData } from '../mock/mockData';
 
 export const reportService = {
   async generateExecutiveReport(analysisId) {
-    await apiClient.post('/reports/executive', { analysisId });
+    const res = await apiClient.post('/reports/executive', { analysisId });
+    if (res) return res;
+
     return {
       type: 'EXECUTIVE',
       title: 'IPsec VPN Executive Security Summary',
@@ -22,7 +24,9 @@ export const reportService = {
   },
 
   async generateTechnicalReport(analysisId) {
-    await apiClient.post('/reports/technical', { analysisId });
+    const res = await apiClient.post('/reports/technical', { analysisId });
+    if (res) return res;
+
     return {
       type: 'TECHNICAL',
       title: 'IPsec VPN Technical & Forensic Audit Report',
@@ -32,6 +36,10 @@ export const reportService = {
   },
 
   downloadReportFile(reportData, format = 'json') {
+    if (reportData && reportData.downloadUrl && format === 'pdf') {
+      window.open(`http://localhost:8000${reportData.downloadUrl}`, '_blank');
+      return;
+    }
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportData, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);

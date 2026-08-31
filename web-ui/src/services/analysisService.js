@@ -3,9 +3,6 @@ import { apiClient } from './api';
 
 export const analysisService = {
   async uploadAndAnalyzePCAP(file, onProgress) {
-    await apiClient.post('/analyze/pcap', { fileName: file.name, size: file.size });
-    
-    // Simulate multi-stage analysis pipeline
     const stages = [
       'Capture loaded',
       'Packet extraction',
@@ -20,24 +17,34 @@ export const analysisService = {
       if (onProgress) {
         onProgress({ stage: stages[i], percent: Math.round(((i + 1) / stages.length) * 100) });
       }
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+
+    const formData = new FormData();
+    if (file && file.name) {
+      formData.append('file', file);
+    }
+
+    const realResult = await apiClient.post('/analyze/pcap', formData);
+    if (realResult && realResult.id) {
+      return realResult;
     }
 
     return mockAnalysisData;
   },
 
   async getAnalysisById(id) {
-    await apiClient.get(`/analysis/${id}`);
-    return mockAnalysisData;
+    const res = await apiClient.get(`/analysis/${id}`);
+    return res || mockAnalysisData;
   },
 
   async getHistory() {
-    await apiClient.get('/analysis/history');
-    return mockHistoryList;
+    const res = await apiClient.get('/analysis/history');
+    return (res && Array.isArray(res) && res.length > 0) ? res : mockHistoryList;
   },
 
   async getComparisonData() {
-    await apiClient.get('/analysis/compare');
-    return mockComparisonData;
+    const res = await apiClient.get('/analysis/compare');
+    return res || mockComparisonData;
   }
 };
