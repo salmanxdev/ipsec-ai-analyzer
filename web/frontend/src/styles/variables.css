@@ -1,0 +1,52 @@
+:root {
+  /* Dark SOC Color System */
+  --bg-primary: #070a12;
+  --bg-secondary: #0d121f;
+  --bg-card: #121929;
+  --bg-card-hover: #182236;
+  --bg-input: #090e1a;
+  
+  --border-color: #1e293b;
+  --border-focus: #38bdf8;
+  --border-accent: #0284c7;
+
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #020617;
+
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-danger: #ef4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.12);
+  --color-info: #06b6d4;
+  --color-info-bg: rgba(6, 182, 212, 0.12);
+
+  /* Cyber & Security Accents */
+  --accent-cyan: #38bdf8;
+  --accent-blue: #3b82f6;
+  --accent-purple: #a855f7;
+  --accent-emerald: #34d399;
+
+  /* Source Tag Badges */
+  --tag-observed-color: #38bdf8;
+  --tag-observed-bg: rgba(56, 189, 248, 0.12);
+  --tag-inferred-color: #f59e0b;
+  --tag-inferred-bg: rgba(245, 158, 11, 0.12);
+  --tag-ai-color: #a855f7;
+  --tag-ai-bg: rgba(168, 85, 247, 0.12);
+  --tag-assessed-color: #10b981;
+  --tag-assessed-bg: rgba(16, 185, 129, 0.12);
+
+  /* Typography Families */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', Consolas, Monaco, monospace;
+
+  /* Layout Spacing */
+  --sidebar-width: 260px;
+  --header-height: 64px;
+}
