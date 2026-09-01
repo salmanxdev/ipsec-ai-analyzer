@@ -2,27 +2,34 @@ import { mockAnalysisData, mockHistoryList, mockComparisonData } from '../mock/m
 import { apiClient } from './api';
 
 export const analysisService = {
-  async uploadAndAnalyzePCAP(file, onProgress) {
+  async uploadAndAnalyzePCAP(fileOrPreset, onProgress) {
     const stages = [
-      'Capture loaded',
-      'Packet extraction',
-      'Protocol identification',
-      'AI traffic classification',
-      'Security assessment',
-      'Risk calculation',
-      'Report generation'
+      'Reading PCAP stream',
+      'Dissecting IKE/ESP headers',
+      'Extracting statistical flow vectors',
+      'ML traffic classification',
+      'Evaluating security policy rules',
+      'Calculating security & risk scores',
+      'Storing session to SQLite database'
     ];
 
     for (let i = 0; i < stages.length; i++) {
       if (onProgress) {
         onProgress({ stage: stages[i], percent: Math.round(((i + 1) / stages.length) * 100) });
       }
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 120));
     }
 
     const formData = new FormData();
-    if (file && file.name) {
-      formData.append('file', file);
+
+    if (fileOrPreset instanceof File) {
+      formData.append('file', fileOrPreset);
+    } else if (fileOrPreset && fileOrPreset.name) {
+      if (fileOrPreset.isPreset) {
+        formData.append('presetName', fileOrPreset.name);
+      } else {
+        formData.append('presetName', fileOrPreset.name);
+      }
     }
 
     const realResult = await apiClient.post('/analyze/pcap', formData);

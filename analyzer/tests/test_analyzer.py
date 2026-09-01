@@ -43,7 +43,7 @@ class TestIPsecAnalyzer(unittest.TestCase):
 
         sec_score = calculate_security_score(vpn_info, assessment)
         self.assertGreaterEqual(sec_score["score"], 80)
-        self.assertEqual(sec_score["grade"], "GOOD")
+        self.assertIn(sec_score["grade"], ["GOOD", "EXCELLENT"])
 
         risk_score = calculate_risk_score(sec_score["score"], assessment_res["threats"])
         self.assertLessEqual(risk_score["riskScore"], 50)

@@ -4,7 +4,10 @@ import { BrainCircuit, Sparkles, Activity, CheckCircle2 } from 'lucide-react';
 
 export const AIInsightsPage = () => {
   const { currentAnalysis } = useAnalysisContext();
-  const aiData = currentAnalysis.aiExplanations;
+  const aiData = currentAnalysis?.aiExplanations || { observableFeatures: [] };
+  const trafficType = currentAnalysis?.trafficAnalysis?.predictedType || 'Encrypted Traffic';
+  const confidence = currentAnalysis?.trafficAnalysis?.confidence || 0;
+  const filename = currentAnalysis?.captureInfo?.filename || 'Active Capture';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -12,13 +15,13 @@ export const AIInsightsPage = () => {
         <div className="soc-card-header">
           <span className="soc-card-title">
             <BrainCircuit size={18} color="var(--accent-purple)" />
-            <span>AI Model Evidence & Explanation Panel</span>
+            <span>AI Model Evidence & Feature Explanation ({filename})</span>
           </span>
-          <span className="soc-badge ai-predicted">AI EXPLAINABILITY</span>
+          <span className="soc-badge ai-predicted">{trafficType} ({confidence}% Conf.)</span>
         </div>
 
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-          Detailed feature importance attribution explaining why the Random Forest / XGBoost classifiers predicted <strong>VoIP traffic</strong> inside the encrypted ESP tunnel.
+          Statistical feature importance attribution explaining why the classifier predicted <strong style={{ color: 'var(--accent-purple)' }}>{trafficType}</strong> inside the encrypted IPsec tunnel without decrypting ESP payloads.
         </p>
 
         <div className="soc-table-container">
@@ -32,7 +35,7 @@ export const AIInsightsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {aiData.observableFeatures.map((feat, idx) => (
+              {(aiData.observableFeatures || []).map((feat, idx) => (
                 <tr key={idx}>
                   <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{feat.feature}</td>
                   <td className="font-mono" style={{ color: 'var(--accent-cyan)', fontWeight: 700 }}>{feat.value}</td>

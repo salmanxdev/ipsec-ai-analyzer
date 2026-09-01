@@ -6,21 +6,32 @@ import { AIConfidence } from '../components/AIConfidence';
 import { VPNConfiguration } from '../components/VPNConfiguration';
 import { VPNTopology } from '../components/VPNTopology';
 import { MetadataAnalysis } from '../components/MetadataAnalysis';
-import { ShieldCheck, Play, Radio, UploadCloud, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Play, Radio, UploadCloud, FileText, CheckCircle2 } from 'lucide-react';
 
 export const Dashboard = () => {
   const { currentAnalysis, setActivePage, setActiveAnalysisMode } = useAnalysisContext();
+  const filename = currentAnalysis?.captureInfo?.filename || 'No Active Capture';
+  const packetCount = currentAnalysis?.captureInfo?.packetCount || 0;
+  const vpnProto = currentAnalysis?.vpnDetection?.protocol || 'IPsec';
+  const ikeVer = currentAnalysis?.vpnDetection?.ikeVersion || 'IKEv2';
+  const enc = currentAnalysis?.vpnDetection?.encryption || 'Unknown';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Landing / Welcome Screen Header */}
-      <div style={{ background: 'linear-gradient(135deg, #0d121f 0%, #162035 100%)', padding: '1.75rem 2rem', borderRadius: '10px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Active Capture Context Header */}
+      <div style={{ background: 'linear-gradient(135deg, #0d121f 0%, #162035 100%)', padding: '1.5rem 2rem', borderRadius: '10px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>
-            Understand Your VPN Security with AI-Powered IPsec Analysis
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span className="soc-badge assessed" style={{ fontSize: '0.75rem' }}>ACTIVE ANALYSIS</span>
+            <span className="font-mono" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent-cyan)' }}>
+              {filename}
+            </span>
           </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.4rem', maxWidth: '750px' }}>
-            Analyze captured or live network traffic, identify IPsec characteristics, classify encrypted traffic patterns, and automatically assess VPN security posture.
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.4rem', display: 'flex', gap: '1.25rem' }}>
+            <span>Packets: <strong style={{ color: 'var(--text-primary)' }}>{packetCount.toLocaleString()}</strong></span>
+            <span>Protocol: <strong style={{ color: 'var(--text-primary)' }}>{vpnProto} ({ikeVer})</strong></span>
+            <span>Cipher: <strong style={{ color: 'var(--text-primary)' }}>{enc}</strong></span>
+            <span>Session ID: <strong className="font-mono" style={{ color: 'var(--text-muted)' }}>{currentAnalysis?.id}</strong></span>
           </div>
         </div>
 
@@ -30,20 +41,19 @@ export const Dashboard = () => {
               setActivePage('analyze');
               setActiveAnalysisMode('pcap');
             }}
-            className="soc-btn soc-btn-secondary"
+            className="soc-btn soc-btn-primary"
           >
             <UploadCloud size={16} />
-            <span>Analyze PCAP</span>
+            <span>Upload New PCAP</span>
           </button>
           <button
             onClick={() => {
-              setActivePage('analyze');
-              setActiveAnalysisMode('live');
+              setActivePage('reports');
             }}
-            className="soc-btn soc-btn-primary"
+            className="soc-btn soc-btn-secondary"
           >
-            <Radio size={16} />
-            <span>Start Live Analysis</span>
+            <FileText size={16} />
+            <span>View Reports</span>
           </button>
         </div>
       </div>

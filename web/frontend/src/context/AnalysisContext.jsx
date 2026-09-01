@@ -11,7 +11,8 @@ export const AnalysisProvider = ({ children }) => {
   const [activeAnalysisMode, setActiveAnalysisMode] = useState('pcap');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(null);
-  
+  const [history, setHistory] = useState(mockHistoryList);
+
   // Live Capture State
   const [isCapturing, setIsCapturing] = useState(false);
   const [liveState, setLiveState] = useState({
@@ -30,16 +31,32 @@ export const AnalysisProvider = ({ children }) => {
     logs: []
   });
 
-  const [history, setHistory] = useState(mockHistoryList);
+  const refreshHistory = async () => {
+    try {
+      const hist = await analysisService.getHistory();
+      if (hist && Array.isArray(hist) && hist.length > 0) {
+        setHistory(hist);
+      }
+    } catch (err) {
+      console.warn('Could not fetch history from API:', err);
+    }
+  };
 
-  const startPcapAnalysis = async (file) => {
+  useEffect(() => {
+    refreshHistory();
+  }, []);
+
+  const startPcapAnalysis = async (fileOrPreset) => {
     setIsAnalyzing(true);
     try {
-      const result = await analysisService.uploadAndAnalyzePCAP(file, (prog) => {
+      const result = await analysisService.uploadAndAnalyzePCAP(fileOrPreset, (prog) => {
         setAnalysisProgress(prog);
       });
-      setCurrentAnalysis(result);
-      setActivePage('dashboard');
+      if (result && result.id) {
+        setCurrentAnalysis(result);
+        await refreshHistory();
+        setActivePage('dashboard');
+      }
     } catch (err) {
       console.error('Failed PCAP Analysis', err);
     } finally {
@@ -63,8 +80,10 @@ export const AnalysisProvider = ({ children }) => {
 
   const selectHistorySession = async (id) => {
     const sessionData = await analysisService.getAnalysisById(id);
-    setCurrentAnalysis(sessionData);
-    setActivePage('dashboard');
+    if (sessionData) {
+      setCurrentAnalysis(sessionData);
+      setActivePage('dashboard');
+    }
   };
 
   return (
@@ -83,7 +102,8 @@ export const AnalysisProvider = ({ children }) => {
         startLiveCapture,
         stopLiveCapture,
         history,
-        selectHistorySession
+        selectHistorySession,
+        refreshHistory
       }}
     >
       {children}
